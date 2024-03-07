@@ -1,8 +1,15 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const app = express();
-const port = process.env.PORT || 3000;
+const app = require("./app");
+const PORT = 3500;
 
-app.listen(port, () => {
-  console.log("app listening on port " + port);
-});
+const startServer = async () => {
+  app.listen(PORT, (err) => {
+    if (err) {
+      console.log(
+        `We have the problem with connecting with server.Code of the error:${err}`
+      );
+      return;
+    }
+    console.log(`Server running. Use our API on port: ${PORT}`);
+  });
+};
+startServer();
