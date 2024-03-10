@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const db = require("../db/connection");
-const ctrlWrapper = require("../helpers/ctrlWrapper");
 
 const { SECRET_KEY } = process.env;
 

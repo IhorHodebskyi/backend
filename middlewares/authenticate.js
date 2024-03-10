@@ -12,7 +12,7 @@ const authenticate = async (req, res, next) => {
   try {
     const { email } = jwt.verify(token, SECRET_KEY);
     db.query(
-      "SELECT `id`, `email`,`token` FROM `users` WHERE `email` = '" +
+      "SELECT `id`,`name`, `email`,`token` FROM `users` WHERE `email` = '" +
         email +
         "'",
       (error, rows, fields) => {
