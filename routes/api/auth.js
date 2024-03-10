@@ -2,9 +2,10 @@ const express = require("express");
 const { getAllUser, signUp } = require("../../controllers/usersControllers");
 const validateBody = require("../../middlewares/validateBody");
 const { sinUpSchema } = require("../../schemas/usersSchemas");
+const authenticate = require("../../middlewares/authenticate");
 const router = express.Router();
 
-router.get("/api", getAllUser);
+router.get("/api", authenticate, getAllUser);
 
 router.post("/signup", validateBody(sinUpSchema), signUp);
 

@@ -30,7 +30,10 @@ const signUp = (req, res) => {
       } else {
         const salt = bcrypt.genSaltSync(15);
         const password = bcrypt.hashSync(req.body.password, salt);
-        const token = jwt.sign({ data: "foobar" }, SECRET_KEY, {
+        const payload = {
+          email: email,
+        };
+        const token = jwt.sign(payload, SECRET_KEY, {
           expiresIn: "23h",
         });
         const sql =
@@ -43,11 +46,13 @@ const signUp = (req, res) => {
           "', '" +
           token +
           "')";
-        db.query(sql, (error) => {
+        db.query(sql, (error, results) => {
+          console.log(results);
           if (error) {
             res.status(400).json({ error });
           } else {
-            res.status(200).json({ token, user: { name, email } });
+            "SELECT `id` FROM `users` WHERE `email` = '" + email + "'",
+              res.status(200).json({ token, user: { name, email } });
           }
         });
       }
