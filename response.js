@@ -1,10 +1,8 @@
-"use strict";
-const status = (values, res) => {
+exports.status = (status, values, res) => {
   const data = {
-    status: 200,
+    status: status,
     values: values,
   };
-  res.json(data);
-  res.end();
+  res.status(data.status);
+  res.json(data.values);
 };
-module.exports = status;

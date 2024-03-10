@@ -1,15 +1,16 @@
 const app = require("./app");
-const port = process.env.PORT || 3500;
+
+const { PORT } = process.env;
 
 const startServer = () => {
-  app.listen(port, (err) => {
+  app.listen(PORT, (err) => {
     if (err) {
       console.log(
         `We have the problem with connecting with server.Code of the error:${err}`
       );
       return;
     }
-    console.log(`Server running. Use our API on port: ${port}`);
+    console.log(`Server running. Use our API on port: ${PORT}`);
   });
 };
 startServer();
