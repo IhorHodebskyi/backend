@@ -69,5 +69,5 @@ const signUp = (req, res) => {
 
 module.exports = {
   getAllUser,
-  signUp: ctrlWrapper(signUp),
+  signUp,
 };
