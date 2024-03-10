@@ -42,13 +42,11 @@ const singIn = (req, res) => {
         );
         res.status(201).json({
           token,
-          user: { name: user.name, email: user.email },
+          user: { id: user.id, name: user.name, email: user.email },
         });
       }
     }
   );
 };
 
-module.exports = {
-  singIn: ctrlWrapper(singIn),
-};
+module.exports = singIn;

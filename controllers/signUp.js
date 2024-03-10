@@ -52,8 +52,14 @@ const signUp = (req, res) => {
           if (error) {
             res.status(400).json({ error });
           } else {
-            "SELECT `id` FROM `users` WHERE `email` = '" + email + "'",
-              res.status(200).json({ token, user: { name, email } });
+            res.status(200).json({
+              token,
+              user: {
+                id: results.insertId,
+                name,
+                email,
+              },
+            });
           }
         });
       }
