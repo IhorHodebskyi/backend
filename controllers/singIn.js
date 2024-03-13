@@ -34,7 +34,7 @@ const singIn = (req, res) => {
             email +
             "'",
           (error, results, fields) => {
-            if (error) throw error;
+            if (error) throw res.status(401).json({ message: error });
             return;
           }
         );

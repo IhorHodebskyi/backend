@@ -2,7 +2,6 @@ const db = require("../db/connection");
 
 const logout = (req, res) => {
   const { id } = req.user;
-  console.log(req.user);
   const token = "";
   db.query(
     "UPDATE `users` SET `token` = '" + token + "' WHERE `id`= '" + id + "'",
