@@ -1,11 +1,12 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const db = require("../db/connection");
+const db = require("../../db/connection");
 
 const { SECRET_KEY } = process.env;
 
 const singIn = (req, res) => {
   const { email, password } = req.body;
+
   db.query(
     "SELECT `id`,`name`, `email`, `password` FROM `users` WHERE `email` = '" +
       email +

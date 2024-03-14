@@ -1,4 +1,4 @@
-const db = require("../db/connection");
+const db = require("../../db/connection");
 
 const logout = (req, res) => {
   const { id } = req.user;

@@ -1,21 +1,23 @@
 const express = require("express");
-const { getAllUser, signUp } = require("../../controllers/signUp");
+
 const validateBody = require("../../middlewares/validateBody");
 const { sinUpSchema, singInSchema } = require("../../schemas/usersSchemas");
 const authenticate = require("../../middlewares/authenticate");
-const singIn = require("../../controllers/singIn");
-const logout = require("../../controllers/logout");
-const getCurrent = require("../../controllers/getCurrent");
-const router = express.Router();
 
-router.get("/api", authenticate, getAllUser);
+const logout = require("../../controllers/usersControllers/logout");
+const getCurrent = require("../../controllers/usersControllers/getCurrent");
+const { signup } = require("../../controllers/auth");
 
-router.post("/signup", validateBody(sinUpSchema), signUp);
+const authRouter = express.Router();
 
-router.post("/singin", validateBody(singInSchema), singIn);
+// authRouter.get("/api", authenticate, getAllUser);
 
-router.post("/logout", authenticate, logout);
+authRouter.post("/signup", validateBody(sinUpSchema), signup);
 
-router.get("/current", authenticate, getCurrent);
+// authRouter.post("/singin", validateBody(singInSchema), singIn);
 
-module.exports = router;
+// authRouter.post("/logout", authenticate, logout);
+
+// authRouter.get("/current", authenticate, getCurrent);
+
+module.exports = authRouter;

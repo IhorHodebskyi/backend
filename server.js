@@ -2,7 +2,7 @@ const app = require("./app");
 
 const { PORT } = process.env;
 
-const startServer = () => {
+const startServer = async () => {
   app.listen(PORT, (err) => {
     if (err) {
       console.log(
