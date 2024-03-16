@@ -6,7 +6,7 @@ const { HttpError } = require("../helpers");
 
 const { SECRET_KEY } = process.env;
 
-const signup = async (body) => {
+const signUp = async (body) => {
   const { name, email, password } = body;
   let sql =
     "SELECT `id`, `email`, `name` FROM `users` WHERE `email` = '" + email + "'";
@@ -46,6 +46,54 @@ const signup = async (body) => {
   };
 };
 
+const singIn = async (email, password) => {
+  let sql =
+    "SELECT `id`,`name`, `email`, `password` FROM `users` WHERE `email` = '" +
+    email +
+    "'";
+  const conn = await mysql.createConnection(config);
+  const rows = await conn.execute(sql);
+
+  if (rows[0].length <= 0) {
+    conn.end();
+    throw HttpError(401, "Email or password is wrong");
+  }
+
+  const user = rows[0];
+  const result = bcrypt.compareSync(password, user[0].password);
+
+  if (!result) {
+    conn.end();
+    throw HttpError(401, "Email or password is wrong");
+  }
+  const payload = {
+    email: user[0].email,
+  };
+  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
+  sql =
+    "UPDATE `users` SET `token` = '" +
+    token +
+    "' WHERE `email`= '" +
+    email +
+    "'";
+  await conn.execute(sql);
+  conn.end();
+  return {
+    token,
+    user: { id: user[0].id, name: user[0].name, email: user[0].email },
+  };
+};
+
+const logout = async (id) => {
+  const token = "";
+  const sql =
+    "UPDATE `users` SET `token` = '" + token + "' WHERE `id`= '" + id + "'";
+  const conn = await mysql.createConnection(config);
+  const rows = await conn.execute(sql);
+};
+
 module.exports = {
-  signup,
+  signUp,
+  singIn,
+  logout,
 };
