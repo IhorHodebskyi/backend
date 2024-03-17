@@ -20,6 +20,7 @@ const authenticate = async (req, res, next) => {
     const conn = await mysql.createConnection(config);
     const rows = await conn.execute(sql);
     const [user] = rows[0];
+    console.log(user);
     if (!user || user.token !== token) {
       res.status(401).json({ message: "Not Authorized" });
       return;

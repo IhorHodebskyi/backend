@@ -35,6 +35,11 @@ const signUp = async (body) => {
     token +
     "')";
   const [results] = await conn.execute(sql);
+  sql =
+    "INSERT INTO `score` (`victory`, `defeat`, `draw`, `user_id`) VALUES ('0', '0','0', '" +
+    results.insertId +
+    "')";
+  await conn.execute(sql);
   conn.end();
   return {
     token,

@@ -1,9 +1,11 @@
 const express = require("express");
-const getScore = require("../../controllers/scoreControllers/getScore");
 const authenticate = require("../../middlewares/authenticate");
+const ctrl = require("../../controllers/gameResults");
 
 const scoreRouter = express.Router();
 
-scoreRouter.get("/get", authenticate, getScore);
+scoreRouter.get("/get", authenticate, ctrl.getScore);
+
+scoreRouter.post("/update", authenticate, ctrl.update);
 
 module.exports = scoreRouter;
