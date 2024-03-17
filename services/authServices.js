@@ -11,8 +11,8 @@ const signUp = async (body) => {
   let sql =
     "SELECT `id`, `email`, `name` FROM `users` WHERE `email` = '" + email + "'";
   const conn = await mysql.createConnection(config);
-  const rows = await conn.execute(sql);
-  if (rows[0].length > 0) {
+  const [rows] = await conn.execute(sql);
+  if (rows.length > 0) {
     conn.end();
     throw HttpError(409, "Email in use");
   }
@@ -34,12 +34,12 @@ const signUp = async (body) => {
     "', '" +
     token +
     "')";
-  const results = await conn.execute(sql);
+  const [results] = await conn.execute(sql);
   conn.end();
   return {
     token,
     user: {
-      id: results[0].insertId,
+      id: results.insertId,
       name,
       email,
     },
@@ -59,15 +59,15 @@ const singIn = async (email, password) => {
     throw HttpError(401, "Email or password is wrong");
   }
 
-  const user = rows[0];
-  const result = bcrypt.compareSync(password, user[0].password);
+  const [user] = rows[0];
+  const result = bcrypt.compareSync(password, user.password);
 
   if (!result) {
     conn.end();
     throw HttpError(401, "Email or password is wrong");
   }
   const payload = {
-    email: user[0].email,
+    email: user.email,
   };
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
   sql =
@@ -80,7 +80,7 @@ const singIn = async (email, password) => {
   conn.end();
   return {
     token,
-    user: { id: user[0].id, name: user[0].name, email: user[0].email },
+    user: { id: user.id, name: user.name, email: user.email },
   };
 };
 
@@ -89,7 +89,8 @@ const logout = async (id) => {
   const sql =
     "UPDATE `users` SET `token` = '" + token + "' WHERE `id`= '" + id + "'";
   const conn = await mysql.createConnection(config);
-  const rows = await conn.execute(sql);
+  await conn.execute(sql);
+  conn.end();
 };
 
 module.exports = {

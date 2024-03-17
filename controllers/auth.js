@@ -15,7 +15,6 @@ const singIn = async (req, res) => {
 
 const logout = async (req, res) => {
   const { id } = req.user;
-  console.log(id);
   await services.logout(id);
   res.status(204).json();
 };
