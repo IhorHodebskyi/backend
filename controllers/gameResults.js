@@ -11,7 +11,6 @@ const update = async (req, res) => {
   const { id } = req.user;
   const { victory, defeat, draw } = req.body;
   const result = await services.update(id, victory, defeat, draw);
-  console.log(result);
   res.json(result);
 };
 

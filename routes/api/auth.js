@@ -8,11 +8,9 @@ const ctrl = require("../../controllers/auth");
 
 const authRouter = express.Router();
 
-// authRouter.get("/api", authenticate, getAllUser);
-
 authRouter.post("/signup", validateBody(sinUpSchema), ctrl.signUp);
 
-authRouter.post("/singin", validateBody(singInSchema), ctrl.singIn);
+authRouter.post("/login", validateBody(singInSchema), ctrl.singIn);
 
 authRouter.post("/logout", authenticate, ctrl.logout);
 

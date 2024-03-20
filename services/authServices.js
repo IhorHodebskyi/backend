@@ -57,14 +57,14 @@ const singIn = async (email, password) => {
     email +
     "'";
   const conn = await mysql.createConnection(config);
-  const rows = await conn.execute(sql);
+  const [rows] = await conn.execute(sql);
 
-  if (rows[0].length <= 0) {
+  if (rows.length <= 0) {
     conn.end();
     throw HttpError(401, "Email or password is wrong");
   }
 
-  const [user] = rows[0];
+  const [user] = rows;
   const result = bcrypt.compareSync(password, user.password);
 
   if (!result) {
@@ -74,7 +74,9 @@ const singIn = async (email, password) => {
   const payload = {
     email: user.email,
   };
+
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
+
   sql =
     "UPDATE `users` SET `token` = '" +
     token +
