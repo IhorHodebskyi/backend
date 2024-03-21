@@ -1,19 +1,19 @@
 const express = require("express");
 
 const validateBody = require("../../middlewares/validateBody");
-const { sinUpSchema, singInSchema } = require("../../schemas/usersSchemas");
+const schemas = require("../../models/user");
 const authenticate = require("../../middlewares/authenticate");
 
 const ctrl = require("../../controllers/auth");
 
-const authRouter = express.Router();
+const router = express.Router();
 
-authRouter.post("/signup", validateBody(sinUpSchema), ctrl.signUp);
+router.post("/signup", validateBody(schemas.sinUpSchema), ctrl.signUp);
 
-authRouter.post("/login", validateBody(singInSchema), ctrl.singIn);
+router.post("/login", validateBody(schemas.singInSchema), ctrl.singIn);
 
-authRouter.post("/logout", authenticate, ctrl.logout);
+router.post("/logout", authenticate, ctrl.logout);
 
-authRouter.get("/current", authenticate, ctrl.getCurrent);
+router.get("/current", authenticate, ctrl.getCurrent);
 
-module.exports = authRouter;
+module.exports = router;
