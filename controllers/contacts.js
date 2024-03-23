@@ -16,7 +16,6 @@ const addContacts = async (req, res) => {
 
 const deleteContact = async (req, res) => {
   const { contactId } = req.params;
-  console.log(typeof contactId);
   const result = await services.deleteContact(contactId);
   if (!result) {
     res.status(404).json({ message: "Not found" });

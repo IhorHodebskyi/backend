@@ -8,10 +8,9 @@ const getContacts = async (user_id) => {
     user_id +
     "' ";
   const conn = await mysql.createConnection(config);
-  const rows = await conn.execute(sql);
+  const [rows] = await conn.execute(sql);
   conn.end();
-  console.log(rows);
-  return rows[0];
+  return rows;
 };
 
 const addContacts = async (user_id, name, number) => {
@@ -28,7 +27,7 @@ const addContacts = async (user_id, name, number) => {
     "')";
 
   const conn = await mysql.createConnection(config);
-  const [rows] = await conn.execute(sql);
+  await conn.execute(sql);
   conn.end();
   const result = {
     id,
