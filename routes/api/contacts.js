@@ -8,6 +8,11 @@ const router = express.Router();
 
 router.get("/", authenticate, ctrl.getContacts);
 
-router.post("/", authenticate, validateBody(schemas.addSchema));
+router.post(
+  "/",
+  authenticate,
+  validateBody(schemas.addSchema),
+  ctrl.addContacts
+);
 
 module.exports = router;

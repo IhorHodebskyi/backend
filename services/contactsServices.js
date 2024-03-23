@@ -1,37 +1,49 @@
 const mysql = require("mysql2/promise");
 const config = require("../db/connection");
-const { nanoid } = require("nanoid");
 
-const getContacts = async (id) => {
+const getContacts = async (user_id) => {
+  console.log(user_id);
   const sql =
-    "SELECT `id`, `user_id`, `name`, `phone` FROM `contacts` WHERE `user_id` = '" +
-    id +
+    "SELECT `id`, `user_id`, `name`, `number` FROM `contacts` WHERE `user_id` = '" +
+    user_id +
     "' ";
   const conn = await mysql.createConnection(config);
-  const [rows] = await conn.execute(sql);
+  const rows = await conn.execute(sql);
   conn.end();
+  console.log(rows);
   return rows[0];
 };
 
-const addContacts = async (user_id, name, phone) => {
-  const id = nanoid();
+const addContacts = async (user_id, name, number) => {
+  const id = Date.now().toString().split("").slice(3, 13).join("");
   const sql =
-    "INSERT INTO `contacts` (`id`, `name`, `phone`, `user_id`) VALUES ('" +
+    "INSERT INTO `contacts` (`id`, `name`, `number`, `user_id`) VALUES ('" +
     id +
     "', '" +
     name +
     "','" +
-    phone +
+    number +
     "', '" +
     user_id +
     "')";
 
   const conn = await mysql.createConnection(config);
-  const rows = await conn.execute(sql);
-  console.log(rows);
+  const [rows] = await conn.execute(sql);
   conn.end();
+  const result = {
+    id,
+    name,
+    number,
+    user_id,
+  };
+  return result;
+};
 
-  return rows[0];
+const deleteContact = async (id) => {
+  const sql = "";
+  const conn = await mysql.createConnection(config);
+  const rows = await conn.execute(sql);
+  return;
 };
 
 module.exports = {
