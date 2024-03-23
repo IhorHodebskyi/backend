@@ -15,4 +15,6 @@ router.post(
   ctrl.addContacts
 );
 
+router.delete("/:contactId", authenticate, ctrl.deleteContact);
+
 module.exports = router;

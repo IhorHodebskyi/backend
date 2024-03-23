@@ -15,7 +15,7 @@ const getContacts = async (user_id) => {
 };
 
 const addContacts = async (user_id, name, number) => {
-  const id = Date.now().toString().split("").slice(3, 13).join("");
+  const id = Date.now().toString().split("").slice(0, 10).join("");
   const sql =
     "INSERT INTO `contacts` (`id`, `name`, `number`, `user_id`) VALUES ('" +
     id +
@@ -40,13 +40,15 @@ const addContacts = async (user_id, name, number) => {
 };
 
 const deleteContact = async (id) => {
-  const sql = "";
+  const sql = "DELETE FROM `contacts` WHERE `id`= '" + id + "'";
   const conn = await mysql.createConnection(config);
-  const rows = await conn.execute(sql);
-  return;
+  const [rows] = await conn.execute(sql);
+  conn.end();
+  return rows.affectedRows !== 0 && Number(id);
 };
 
 module.exports = {
   getContacts,
   addContacts,
+  deleteContact,
 };

@@ -11,11 +11,12 @@ const addContacts = async (req, res) => {
   const { id: user_id } = req.user;
   const { name, number } = req.body;
   const result = await services.addContacts(user_id, name, number);
-  res.json(result);
+  res.status(201).json(result);
 };
 
 const deleteContact = async (req, res) => {
   const { contactId } = req.params;
+  console.log(typeof contactId);
   const result = await services.deleteContact(contactId);
   if (!result) {
     res.status(404).json({ message: "Not found" });
@@ -27,5 +28,5 @@ const deleteContact = async (req, res) => {
 module.exports = {
   getContacts: ctrlWrapper(getContacts),
   addContacts: ctrlWrapper(addContacts),
-  deleteContact: ctrlWrapper(addContacts),
+  deleteContact: ctrlWrapper(deleteContact),
 };
