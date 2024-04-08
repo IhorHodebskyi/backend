@@ -11,11 +11,3 @@ const pool = new Pool({
 });
 
 module.exports = pool;
-
-// module.exports = {
-//   host: DB_HOST,
-//   port: DB_PORT,
-//   user: DB_USER,
-//   password: DB_PASSWORD,
-//   database: DATA_BASE,
-// };
