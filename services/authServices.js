@@ -11,7 +11,6 @@ const signUp = async (body) => {
   let sql = "SELECT `id`, `email`, `name` FROM `users` WHERE `email` = '" + email + "'";
   const conn = await mysql.createConnection(config);
   const [rows] = await conn.execute(sql);
-  console.log(rows);
   if (rows.length > 0) {
     conn.end();
     throw HttpError(409, "Email in use");

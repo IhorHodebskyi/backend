@@ -15,8 +15,7 @@ const update = async (id, score) => {
   const conn = await mysql.createConnection(config);
   const rows = await conn.execute(sql);
   conn.end();
-  console.log(rows);
-  return rows[0];
+  return { id, highScore: score };
 };
 
 module.exports = {
