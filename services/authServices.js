@@ -75,7 +75,6 @@ const logout = async (id) => {
   const token = "";
   const sql = "UPDATE users SET token = $1 WHERE id = $2";
   const updateUser = await db.query(sql, [token, id]);
-  conn.end();
 };
 
 module.exports = {
