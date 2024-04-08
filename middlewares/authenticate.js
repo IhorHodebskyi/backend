@@ -13,10 +13,7 @@ const authenticate = async (req, res, next) => {
   }
   try {
     const { email } = jwt.verify(token, SECRET_KEY);
-    const sql =
-      "SELECT `id`,`name`, `email`,`token` FROM `users` WHERE `email` = '" +
-      email +
-      "'";
+    const sql = "SELECT `id`,`name`, `email`,`token`, `highScore` FROM `users` WHERE `email` = '" + email + "'";
     const conn = await mysql.createConnection(config);
     const rows = await conn.execute(sql);
     const [user] = rows[0];

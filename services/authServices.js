@@ -8,10 +8,10 @@ const { SECRET_KEY } = process.env;
 
 const signUp = async (body) => {
   const { name, email, password } = body;
-  let sql =
-    "SELECT `id`, `email`, `name` FROM `users` WHERE `email` = '" + email + "'";
+  let sql = "SELECT `id`, `email`, `name` FROM `users` WHERE `email` = '" + email + "'";
   const conn = await mysql.createConnection(config);
   const [rows] = await conn.execute(sql);
+  console.log(rows);
   if (rows.length > 0) {
     conn.end();
     throw HttpError(409, "Email in use");
@@ -25,7 +25,7 @@ const signUp = async (body) => {
     expiresIn: "23h",
   });
   sql =
-    "INSERT INTO `users` (`name`, `email`, `password`, `token`) VALUES ('" +
+    "INSERT INTO `users` (`name`, `email`, `password`, `token`, `highScore`) VALUES ('" +
     name +
     "', '" +
     email +
@@ -33,13 +33,8 @@ const signUp = async (body) => {
     hashPassword +
     "', '" +
     token +
-    "')";
+    "', '0')";
   const [results] = await conn.execute(sql);
-  sql =
-    "INSERT INTO `score` (`victory`, `defeat`, `draw`, `user_id`) VALUES ('0', '0','0', '" +
-    results.insertId +
-    "')";
-  await conn.execute(sql);
   conn.end();
   return {
     token,
@@ -47,15 +42,13 @@ const signUp = async (body) => {
       id: results.insertId,
       name,
       email,
+      highScore: 0,
     },
   };
 };
 
 const singIn = async (email, password) => {
-  let sql =
-    "SELECT `id`,`name`, `email`, `password` FROM `users` WHERE `email` = '" +
-    email +
-    "'";
+  let sql = "SELECT `id`,`name`, `email`, `password`, `highScore` FROM `users` WHERE `email` = '" + email + "'";
   const conn = await mysql.createConnection(config);
   const [rows] = await conn.execute(sql);
 
@@ -77,24 +70,18 @@ const singIn = async (email, password) => {
 
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
 
-  sql =
-    "UPDATE `users` SET `token` = '" +
-    token +
-    "' WHERE `email`= '" +
-    email +
-    "'";
+  sql = "UPDATE `users` SET `token` = '" + token + "' WHERE `email`= '" + email + "'";
   await conn.execute(sql);
   conn.end();
   return {
     token,
-    user: { id: user.id, name: user.name, email: user.email },
+    user: { id: user.id, name: user.name, email: user.email, highScore: user.highScore },
   };
 };
 
 const logout = async (id) => {
   const token = "";
-  const sql =
-    "UPDATE `users` SET `token` = '" + token + "' WHERE `id`= '" + id + "'";
+  const sql = "UPDATE `users` SET `token` = '" + token + "' WHERE `id`= '" + id + "'";
   const conn = await mysql.createConnection(config);
   await conn.execute(sql);
   conn.end();

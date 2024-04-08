@@ -2,15 +2,16 @@ const { ctrlWrapper } = require("../helpers");
 const services = require("../services/services");
 
 const getScore = async (req, res) => {
-  const { id } = req.user;
-  const result = await services.getScore(id);
+  const result = await services.getScore();
   res.json(result);
 };
 
 const update = async (req, res) => {
   const { id } = req.user;
-  const { victory, defeat, draw } = req.body;
-  const result = await services.update(id, victory, defeat, draw);
+
+  const { score } = req.body;
+  console.log(req.body);
+  const result = await services.update(id, score);
   res.json(result);
 };
 

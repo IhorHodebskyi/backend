@@ -6,6 +6,6 @@ const scoreRouter = express.Router();
 
 scoreRouter.get("/get", authenticate, ctrl.getScore);
 
-scoreRouter.post("/update", authenticate, ctrl.update);
+scoreRouter.put("/update", authenticate, ctrl.update);
 
 module.exports = scoreRouter;
