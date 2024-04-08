@@ -50,7 +50,6 @@ const singIn = async (email, password) => {
   let sql = "SELECT `id`,`name`, `email`, `password`, `highScore` FROM `users` WHERE `email` = '" + email + "'";
   const conn = await mysql.createConnection(config);
   const [rows] = await conn.execute(sql);
-
   if (rows.length <= 0) {
     conn.end();
     throw HttpError(401, "Email or password is wrong");
