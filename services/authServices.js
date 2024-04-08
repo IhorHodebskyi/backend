@@ -1,4 +1,3 @@
-const mysql = require("mysql2/promise");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const db = require("../db/connection");
@@ -11,42 +10,43 @@ const signUp = async (body) => {
   let sql = "SELECT * FROM users WHERE email=$1";
   const { rows } = await db.query(sql, [email]);
 
-  console.log(rows);
   if (rows.length > 0) {
     throw HttpError(409, "Email in use");
   }
+
   const salt = bcrypt.genSaltSync(15);
   const hashPassword = bcrypt.hashSync(password, salt);
   const payload = {
     email: email,
   };
+
   const token = jwt.sign(payload, SECRET_KEY, {
     expiresIn: "23h",
   });
-  sql = "INSERT INTO users (name, email, password, token) values($1, $2, $3, $4) RETURNING *";
 
+  sql = "INSERT INTO users (name, email, password, token) values($1, $2, $3, $4) RETURNING *";
   const newUser = await db.query(sql, [name, email, hashPassword, token]);
-  console.log(newUser);
+
+  sql = "INSERT INTO count (high_score, user_id) values($1, $2) RETURNING *";
+  const highScore = await db.query(sql, [0, newUser.rows[0].id]);
+
   return {
     token,
     user: {
-      id: newUser.rows.id,
+      id: newUser.rows[0].id,
       name,
       email,
+      highScore: highScore.rows[0].high_score,
     },
   };
 };
 
 const singIn = async (email, password) => {
-  let sql = "INSERT INTO users (name, email, password, token) values($1, $2, $3, $4) RETURNING *";
+  let sql = "SELECT * FROM users INNER JOIN count ON users.email = $1";
 
-  const newUser = await db.query(sql, [name, email, hashPassword, token]);
+  const { rows } = await db.query(sql, [email]);
 
-  // let sql = "SELECT `id`,`name`, `email`, `password`, `highScore` FROM `users` WHERE `email` = '" + email + "'";
-  // const conn = await mysql.createConnection(config);
-  // const [rows] = await conn.execute(sql);
   if (rows.length <= 0) {
-    // conn.end();
     throw HttpError(401, "Email or password is wrong");
   }
 
@@ -54,7 +54,6 @@ const singIn = async (email, password) => {
   const result = bcrypt.compareSync(password, user.password);
 
   if (!result) {
-    // conn.end();
     throw HttpError(401, "Email or password is wrong");
   }
   const payload = {
@@ -63,20 +62,19 @@ const singIn = async (email, password) => {
 
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
 
-  sql = "UPDATE `users` SET `token` = '" + token + "' WHERE `email`= '" + email + "'";
-  await conn.execute(sql);
-  conn.end();
+  sql = "UPDATE users SET token = $1 WHERE email= $2 RETURNING *";
+  const updateUser = await db.query(sql, [token, email]);
+
   return {
     token,
-    user: { id: user.id, name: user.name, email: user.email, highScore: user.highScore },
+    user: { id: updateUser.rows[0].id, name: user.name, email: user.email, high_score: user.high_score },
   };
 };
 
 const logout = async (id) => {
   const token = "";
-  const sql = "UPDATE `users` SET `token` = '" + token + "' WHERE `id`= '" + id + "'";
-  const conn = await mysql.createConnection(config);
-  await conn.execute(sql);
+  const sql = "UPDATE users SET token = $1 WHERE id = $2";
+  const updateUser = await db.query(sql, [token, id]);
   conn.end();
 };
 
