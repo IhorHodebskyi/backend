@@ -1,21 +1,17 @@
-const mysql = require("mysql2/promise");
-const config = require("../db/connection");
+const db = require("../db/connection");
 
 const getScore = async () => {
-  const sql = "SELECT `id`, `name`, `highScore` FROM `users` ";
-  const conn = await mysql.createConnection(config);
-  const [rows] = await conn.execute(sql);
-  conn.end();
+  const sql = "SELECT users.id, users.name, count.high_score FROM users INNER JOIN count ON users.id = count.user_id ";
+  const { rows } = await db.query(sql);
   return rows;
 };
 
 const update = async (id, score) => {
   console.log(score);
-  const sql = "UPDATE `users` SET `highScore` = '" + score + "'  WHERE `id`= '" + id + "'";
-  const conn = await mysql.createConnection(config);
-  const rows = await conn.execute(sql);
-  conn.end();
-  return { id, highScore: score };
+  const sql = "UPDATE count SET high_score = $1  WHERE user_id= $2 RETURNING *";
+  const { rows } = await db.query(sql, [score, id]);
+  console.log(rows);
+  return { id, high_score: score };
 };
 
 module.exports = {

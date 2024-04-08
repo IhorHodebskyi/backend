@@ -11,14 +11,14 @@ const authenticate = async (req, res, next) => {
     res.status(401).json({ message: "Not Authorized" });
     return;
   }
-  console.log(1);
+
   try {
     const { email } = jwt.verify(token, SECRET_KEY);
     const sql =
       "SELECT users.id, users.name, users.email, users.token, count.high_score FROM users INNER JOIN count ON users.id = count.user_id WHERE email LIKE $1";
     const { rows } = await db.query(sql, [email]);
     const [user] = rows;
-    console.log(user);
+
     if (!user || user.token !== token) {
       res.status(401).json({ message: "Not Authorized" });
       return;

@@ -20,9 +20,8 @@ const logout = async (req, res) => {
 };
 
 const getCurrent = (req, res) => {
-  const { id, name, email } = req.user;
-
-  res.json({ id, name, email });
+  const { id, name, email, high_score } = req.user;
+  res.json({ id, name, email, high_score });
 };
 
 module.exports = {
