@@ -1,18 +1,18 @@
 const mysql = require("mysql2/promise");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const config = require("../db/connection");
+const db = require("../db/connection");
 const { HttpError } = require("../helpers");
 
 const { SECRET_KEY } = process.env;
 
 const signUp = async (body) => {
   const { name, email, password } = body;
-  let sql = "SELECT `id`, `email`, `name` FROM `users` WHERE `email` = '" + email + "'";
-  const conn = await mysql.createConnection(config);
-  const [rows] = await conn.execute(sql);
+  let sql = "SELECT * FROM users WHERE email=$1";
+  const { rows } = await db.query(sql, [email]);
+
+  console.log(rows);
   if (rows.length > 0) {
-    conn.end();
     throw HttpError(409, "Email in use");
   }
   const salt = bcrypt.genSaltSync(15);
@@ -23,35 +23,30 @@ const signUp = async (body) => {
   const token = jwt.sign(payload, SECRET_KEY, {
     expiresIn: "23h",
   });
-  sql =
-    "INSERT INTO `users` (`name`, `email`, `password`, `token`, `highScore`) VALUES ('" +
-    name +
-    "', '" +
-    email +
-    "','" +
-    hashPassword +
-    "', '" +
-    token +
-    "', '0')";
-  const [results] = await conn.execute(sql);
-  conn.end();
+  sql = "INSERT INTO users (name, email, password, token) values($1, $2, $3, $4) RETURNING *";
+
+  const newUser = await db.query(sql, [name, email, hashPassword, token]);
+  console.log(newUser);
   return {
     token,
     user: {
-      id: results.insertId,
+      id: newUser.rows.id,
       name,
       email,
-      highScore: 0,
     },
   };
 };
 
 const singIn = async (email, password) => {
-  let sql = "SELECT `id`,`name`, `email`, `password`, `highScore` FROM `users` WHERE `email` = '" + email + "'";
-  const conn = await mysql.createConnection(config);
-  const [rows] = await conn.execute(sql);
+  let sql = "INSERT INTO users (name, email, password, token) values($1, $2, $3, $4) RETURNING *";
+
+  const newUser = await db.query(sql, [name, email, hashPassword, token]);
+
+  // let sql = "SELECT `id`,`name`, `email`, `password`, `highScore` FROM `users` WHERE `email` = '" + email + "'";
+  // const conn = await mysql.createConnection(config);
+  // const [rows] = await conn.execute(sql);
   if (rows.length <= 0) {
-    conn.end();
+    // conn.end();
     throw HttpError(401, "Email or password is wrong");
   }
 
@@ -59,7 +54,7 @@ const singIn = async (email, password) => {
   const result = bcrypt.compareSync(password, user.password);
 
   if (!result) {
-    conn.end();
+    // conn.end();
     throw HttpError(401, "Email or password is wrong");
   }
   const payload = {
