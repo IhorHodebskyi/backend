@@ -7,7 +7,7 @@ const pool = new Pool({
   user: DB_USER,
   password: DB_PASSWORD,
   database: DATA_BASE,
-  ssl: true,
+  // ssl: true,
 });
 
 module.exports = pool;
