@@ -7,10 +7,8 @@ const getScore = async () => {
 };
 
 const update = async (id, score) => {
-  console.log(score);
   const sql = "UPDATE count SET high_score = $1  WHERE user_id= $2 RETURNING *";
   const { rows } = await db.query(sql, [score, id]);
-  console.log(rows);
   return { id, high_score: score };
 };
 
